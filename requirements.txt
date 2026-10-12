@@ -3,4 +3,8 @@ gradio
 python-dotenv
 requests
 beautifulsoup4
+<<<<<<< HEAD
 pypdf
+=======
+pypdf
+>>>>>>> 0e10835ea12be9c5de270499bccdd6298e2d94e5

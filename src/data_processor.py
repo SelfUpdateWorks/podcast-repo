@@ -6,10 +6,6 @@ clean string, ready to be passed to the LLM step.
 
 import re
 
-import requests
-from bs4 import BeautifulSoup
-from pypdf import PdfReader
-
 import io
 
 
