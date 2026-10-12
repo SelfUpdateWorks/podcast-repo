@@ -10,6 +10,8 @@ import requests
 from bs4 import BeautifulSoup
 from pypdf import PdfReader
 
+import io
+
 
 def fetch_transcript(url):
     """Download a web page and return its raw text."""
@@ -17,6 +19,11 @@ def fetch_transcript(url):
     response.raise_for_status()
 
     content_type = response.headers.get("Content-Type", "")
+
+        # A link to a PDF file: read the bytes as a PDF, not as text
+    if "pdf" in content_type or url.lower().split("?")[0].endswith(".pdf"):
+        reader = PdfReader(io.BytesIO(response.content))
+        return "\n\n".join(page.extract_text() or "" for page in reader.pages)
 
     if "html" in content_type:
         soup = BeautifulSoup(response.text, "html.parser")
