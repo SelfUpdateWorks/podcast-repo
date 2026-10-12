@@ -49,6 +49,7 @@ Accuracy:
 - Simplify the language, never the meaning. If the article is uncertain, say so.
 - Keep the strength of the claims: if people only reported how they felt, say
   "people felt" or "people said", not that it was proven.
+- If the text is not a readable article, reply only with: UNREADABLE
 
 Format (the text will be read aloud by a voice):
 - No markdown, no bullet symbols, no asterisks, no headings.

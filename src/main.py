@@ -45,6 +45,10 @@ def summarize(url, pdf_file):
     audio_path = generate_audio(script, path=f"outputs/takeaways_{int(time.time())}.mp3")
     return script, audio_path
 
+    script = create_script(text)
+    if script.strip() == "UNREADABLE":
+        raise gr.Error("This doesn't look like a readable article. Try uploading the PDF instead.")
+
 
 with gr.Blocks(title="Science in Plain Words") as demo:
     gr.Markdown("# Science in Plain Words\n"
