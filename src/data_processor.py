@@ -5,8 +5,11 @@ clean string, ready to be passed to the LLM step.
 """
 
 import re
-
 import io
+
+import requests
+from bs4 import BeautifulSoup
+from pypdf import PdfReader
 
 
 def fetch_transcript(url):
