@@ -10,6 +10,7 @@ import io
 import requests
 from bs4 import BeautifulSoup
 from pypdf import PdfReader
+from collections import Counter
 
 
 def fetch_transcript(url):
@@ -32,12 +33,35 @@ def fetch_transcript(url):
 
     return response.text
 
+def remove_repeated_lines(pages, min_pages=None, min_length=20):
+    """Remove page headers and footers: long lines that repeat on several pages."""
+    if min_pages is None:
+        min_pages = max(2, len(pages) // 4)    # 5 pages -> 2, 12 pages -> 3, 40 pages -> 10
+
+    page_lines = [[line.strip() for line in page.splitlines()] for page in pages]
+
+    counts = Counter()
+    for lines in page_lines:
+        for line in set(lines):
+            if len(line) >= min_length:
+                counts[line] += 1
+
+    repeated = {line for line, n in counts.items() if n >= min_pages}
+
+    return ["\n".join(line for line in lines if line not in repeated)
+            for lines in page_lines]
+
+    repeated = {line for line, n in counts.items() if n >= min_pages}
+
+    # keep every line that is not a repeated one
+    return ["\n".join(line for line in lines if line not in repeated)
+            for lines in page_lines]
 
 def read_pdf(file_path):
-    """Read a PDF file and return all its text."""
+    """Read a PDF file and return all its text, without repeated page headers."""
     reader = PdfReader(file_path)
     pages = [page.extract_text() or "" for page in reader.pages]
-    return "\n\n".join(pages)
+    return "\n\n".join(remove_repeated_lines(pages))
 
 
 def clean_paper(text):
@@ -62,6 +86,9 @@ def clean_paper(text):
 
     # 5. Join the lines inside each paragraph into one line
     text = re.sub(r"(?<!\n)\n(?!\n)", " ", text)
+
+    # 6. Remove numeric citation markers like [32], [1, 2] or [3-5]
+    text = re.sub(r"\s*\[\d+(?:\s*[,–-]\s*\d+)*\]", "", text)
 
     return text
 
